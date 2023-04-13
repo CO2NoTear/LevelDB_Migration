@@ -1,0 +1,22 @@
+/**
+ * @file config.h.in
+ * @brief
+ * configure c/c++
+ *
+ * @author niexw
+ * @email niexiaowen@uestc.edu.cn
+ */
+#ifndef __DB_CONFIG_H__
+#define __DB_CONFIG_H__
+
+#define S_OK 0    /* 正常返回 */
+#define S_FALSE 1 /* 异常返回 */
+#define OCF_WEAK __attribute__((weak))
+#define DLL_NO_EXPORT                                                          \
+    __attribute__((visibility("hidden"))) /* 禁止符号从dll导出 */
+
+#if defined(__cplusplus)
+#    include <cstddef>/* NULL */
+#endif                /* __CPLUSPLUS */
+
+#endif /* __DB_CONFIG_H__ */
