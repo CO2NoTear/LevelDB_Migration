@@ -8,5 +8,5 @@
 #
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-set(LIB_STORE_IMPL store/arena.cc)
+set(LIB_STORE_IMPL store/arena.cc store/status.cc)
 add_library(store STATIC ${LIB_STORE_IMPL})
