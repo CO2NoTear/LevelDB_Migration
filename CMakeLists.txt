@@ -1,4 +1,4 @@
-##
+# #
 # @file CMakeLists.txt
 # @brief
 # db项目的根CMakeLists.txt
@@ -15,20 +15,24 @@ message(STATUS "Generator: ${CMAKE_GENERATOR}")
 message(STATUS "Building OS: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Building Processor: ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID}")
+message(STATUS ${DB_BINARY_DIR})
 
 # 打开verbose选项
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 # 编译模式，Release/Debug，-DCMAKE_BUILD_TYPE=Release|Debug
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug) # Debug Release
 endif()
+
 string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
-if (CMAKE_BUILD_TYPE MATCHES "debug")
+
+if(CMAKE_BUILD_TYPE MATCHES "debug")
     set(CMAKE_BUILD_TYPE Debug)
 else()
     set(CMAKE_BUILD_TYPE Release)
 endif()
+
 message(STATUS "Building mode: ${CMAKE_BUILD_TYPE}")
 
 # c/c++按照11标准
@@ -49,26 +53,26 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${PROJECT_BINARY_DIR}/bin")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${PROJECT_BINARY_DIR}/bin")
 
 # gcc/g++ options
-if (CMAKE_C_COMPILER_ID MATCHES "GNU")
+if(CMAKE_C_COMPILER_ID MATCHES "GNU")
     if(CMAKE_C_COMPILER_VERSION VERSION_LESS "6.3")
         message(FATAL_ERROR "The least version of gcc is 6.3")
     endif()
 
-    set(CMAKE_C_FLAGS                     "-Wall -Werror -Wno-attributes -include store/config.h")
-    set(CMAKE_C_FLAGS_DEBUG               "-g -DDEBUG")
-    set(CMAKE_C_FLAGS_RELEASE             "-O3")
-    set(CMAKE_C_FLAGS_MINSIZEREL          "-Os")
-    set(CMAKE_C_RELWITHDEBINFO_RELEASE    "-O2")
-    set(CMAKE_CXX_FLAGS                   "-Wall -Weffc++ -Werror -Wno-attributes -include store/config.h -ftemplate-backtrace-limit=0 -fno-exceptions -fno-rtti")
-    set(CMAKE_CXX_FLAGS_DEBUG             "-g -DDEBUG")
-    set(CMAKE_CXX_FLAGS_RELEASE           "-O3 -fno-strict-aliasing")
-    set(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
-    set(CMAKE_CXX_RELWITHDEBINFO_RELEASE  "-O2")
+    set(CMAKE_C_FLAGS "-Wall -Werror -Wno-attributes -include store/config.h")
+    set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "-O3")
+    set(CMAKE_C_FLAGS_MINSIZEREL "-Os")
+    set(CMAKE_C_RELWITHDEBINFO_RELEASE "-O2")
+    set(CMAKE_CXX_FLAGS "-Wall -Weffc++ -Werror -Wno-attributes -include store/config.h -ftemplate-backtrace-limit=0 -fno-exceptions -fno-rtti")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fno-strict-aliasing")
+    set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
+    set(CMAKE_CXX_RELWITHDEBINFO_RELEASE "-O2")
 
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG      "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
-    set(CMAKE_MODULE_LINKER_FLAGS_DEBUG   "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG   "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE    "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
+    set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
+    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
     set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "${CMAKE_MODULE_LINKER_FLAGS_RELEASE} -s -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} -s -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address")
 endif()
@@ -89,7 +93,30 @@ configure_file(
 )
 
 # 指定编译子目录
-add_subdirectory(src)
-add_subdirectory(tests)
+# add_subdirectory(src)
+# add_subdirectory(tests)
+find_package(Catch2 REQUIRED)
+
+include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
+
+set(DB
+    "src/store/arena.cc"
+    "src/store/arena.h"
+    "src/store/random.h"
+    "src/store/skiplist.h"
+    "src/store/status.cc")
+add_library(store STATIC ${DB})
+
+add_executable(TEST "")
+target_sources(TEST
+    PRIVATE
+
+    # "tests/skiplist_test.cc"
+    "tests/arenaTest.cc"
+    "tests/statusTest.cc"
+    "tests/googletest_to_catchtest.cc")
+target_link_libraries(TEST store Catch2::Catch2WithMain)
+
+add_test(NAME "tests" COMMAND "TEST")
 
 message(STATUS "### Done ###")

@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../bin/libstore.a  CMakeFiles/store.dir/store/arena.cc.o CMakeFiles/store.dir/store/status.cc.o
-/usr/bin/ranlib ../bin/libstore.a

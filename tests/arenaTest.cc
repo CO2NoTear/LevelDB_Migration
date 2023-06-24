@@ -28,16 +28,16 @@ TEST_CASE("store/arena.h")
             if (i % (N / 10) == 0) {
                 s = i;
             } else {
-                s = rnd.oneIn(4000)
+                s = rnd.OneIn(4000)
                         ? rnd.uniform(6000)
-                        : (rnd.oneIn(10) ? rnd.uniform(100) : rnd.uniform(20));
+                        : (rnd.OneIn(10) ? rnd.uniform(100) : rnd.uniform(20));
             }
             if (s == 0) {
                 // Our arena disallows size 0 allocations.
                 s = 1;
             }
             char *r;
-            if (rnd.oneIn(10)) {
+            if (rnd.OneIn(10)) {
                 r = arena.aligned(s);
             } else {
                 r = arena.allocate(s);
