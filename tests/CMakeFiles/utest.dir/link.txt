@@ -1,0 +1,1 @@
+/usr/bin/c++  -Wall -Weffc++ -Werror -Wno-attributes -include store/config.h -ftemplate-backtrace-limit=0  -fno-rtti -g -DDEBUG   -Bsymbolic -Bsymbolic-functions -Wl,--no-undefined -fsanitize=address -rdynamic CMakeFiles/utest.dir/test.cc.o CMakeFiles/utest.dir/arenaTest.cc.o CMakeFiles/utest.dir/statusTest.cc.o  -o ../bin/utest  ../bin/libstore.a 

@@ -1,0 +1,8 @@
+/home/co2notear/Code/store/CMakeFiles/rebuild_cache.dir
+/home/co2notear/Code/store/CMakeFiles/edit_cache.dir
+/home/co2notear/Code/store/src/CMakeFiles/rebuild_cache.dir
+/home/co2notear/Code/store/src/CMakeFiles/edit_cache.dir
+/home/co2notear/Code/store/src/CMakeFiles/store.dir
+/home/co2notear/Code/store/tests/CMakeFiles/rebuild_cache.dir
+/home/co2notear/Code/store/tests/CMakeFiles/edit_cache.dir
+/home/co2notear/Code/store/tests/CMakeFiles/utest.dir
