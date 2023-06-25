@@ -5,14 +5,14 @@
 #include <atomic>
 #include <set>
 #include <catch2/catch_test_macros.hpp>
-#include "store/skiplist.h"
-#include "store/arena.h"
-#include "store/random.h"
+#include "db/skiplist.h"
+#include "util/arena.h"
+#include "util/random.h"
 
 #define ASSERT_TRUE(exp) REQUIRE(exp == true)
 #define ASSERT_EQ(exp1, exp2) REQUIRE((exp1) == (exp2))
 
-namespace store {
+namespace leveldb {
 
 typedef uint64_t Key;
 
@@ -59,7 +59,7 @@ TEST_CASE("skiplist test")
         Comparator cmp;
         SkipList<Key, Comparator> list(cmp, &arena);
         for (int i = 0; i < N; i++) {
-            Key key = rnd.next() % R;
+            Key key = rnd.Next() % R;
             if (keys.insert(key).second) { list.Insert(key); }
         }
 
@@ -151,4 +151,4 @@ TEST_CASE("skiplist test")
     // check that it is either expected given the initial snapshot or has
     // been concurrently added since the iterator started.
 } // namespace store
-} // namespace store
+} // namespace leveldb

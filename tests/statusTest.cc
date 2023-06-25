@@ -7,36 +7,17 @@
 // @email niexiaowen@uestc.edu.cn
 //
 #include <catch2/catch_test_macros.hpp>
-#include <store/status.h>
-#include <store/config.h>
+#include <leveldb/status.h>
+#include <leveldb/config.h>
 #include <string.h>
 
-using namespace store;
+using namespace leveldb;
 
 TEST_CASE("store/status.h")
 {
     SECTION("ok")
     {
         Status status;
-        REQUIRE(status.get() == S_OK);
-
-        status.set(-1);
-        const char *ret = status.descript();
-        REQUIRE(::strcmp(ret, "Operation not permitted") == 0);
-        REQUIRE(status.isSystemError());
-        status.set(-2);
-        ret = status.descript();
-        REQUIRE(::strcmp(ret, "No such file or directory") == 0);
-        REQUIRE(status.isSystemError());
-
-        status.set(-1000);
-        ret = status.descript();
-        REQUIRE(::strcmp(ret, "local error") == 0);
-        REQUIRE(!status.isSystemError());
-
-        status.set(0);
-        REQUIRE(!status.isSystemError());
-        status.set(33);
-        REQUIRE(!status.isSystemError());
+        REQUIRE(status.ok());
     }
 }

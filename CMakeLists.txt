@@ -6,7 +6,7 @@
 # @author niexw
 # @email xiaowen.nie.cn@gmail.com
 #
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.2)
 project(db)
 message(STATUS "### Begin to configure project db ###")
 
@@ -15,7 +15,7 @@ message(STATUS "Generator: ${CMAKE_GENERATOR}")
 message(STATUS "Building OS: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Building Processor: ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID}")
-message(STATUS ${DB_BINARY_DIR})
+message(STATUS ${PROJECT_SOURCE_DIR})
 
 # 打开verbose选项
 set(CMAKE_VERBOSE_MAKEFILE on)
@@ -58,12 +58,12 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU")
         message(FATAL_ERROR "The least version of gcc is 6.3")
     endif()
 
-    set(CMAKE_C_FLAGS "-Wall -Werror -Wno-attributes -include store/config.h")
+    set(CMAKE_C_FLAGS "-Wall -Werror -Wno-attributes -include leveldb/config.h")
     set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG")
     set(CMAKE_C_FLAGS_RELEASE "-O3")
     set(CMAKE_C_FLAGS_MINSIZEREL "-Os")
     set(CMAKE_C_RELWITHDEBINFO_RELEASE "-O2")
-    set(CMAKE_CXX_FLAGS "-Wall -Weffc++ -Werror -Wno-attributes -include store/config.h -ftemplate-backtrace-limit=0 -fno-exceptions -fno-rtti")
+    set(CMAKE_CXX_FLAGS "-Wall -Weffc++ -Werror -Wno-attributes -include leveldb/config.h -ftemplate-backtrace-limit=0 -fno-exceptions -fno-rtti")
     set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fno-strict-aliasing")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
@@ -86,48 +86,140 @@ check_type_size(long SIZEOF_LONG)
 check_type_size(wchar_t SIZEOF_WCHAR_T)
 
 # 生成config.h文件
-configure_file(
-    ${CMAKE_SOURCE_DIR}/config.h.in
-    ${CMAKE_SOURCE_DIR}/include/store/config.h
-    NEWLINE_STYLE UNIX
-)
+# configure_file(
+# ${CMAKE_SOURCE_DIR}/config.h.in
+# ${CMAKE_SOURCE_DIR}/include/leveldb/config.h
+# NEWLINE_STYLE UNIX
+# )
 
 # 指定编译子目录
 # add_subdirectory(src)
 # add_subdirectory(tests)
 find_package(Catch2 REQUIRED)
-
-include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
-
-set(DB
-    "include/store/arena.h"
-    "include/store/coding.h"
-    "include/store/crc32c.h"
-    "include/store/log_format.h"
-    "include/store/random.h"
-    "include/store/skiplist.h"
-    "include/store/write_batch.h"
-    "include/store/write_batch_internal.h"
-    "include/store/mutexlock.h"
-
-    "include/store/file.h"
-
-    # "include/store/log_reader.h"
-    # "include/store/log_writer.h"
-    "include/store/status.h"
-    "include/store/slice.h"
-    "include/store/port.h"
-    "include/store/thread_annotations.h"
-
-    "src/store/crc32c.cc"
-
-    # "src/store/log_reader.cc"
-    # "src/store/log_writer.cc"
-    "src/store/arena.cc"
-    "src/store/status.cc"
+set(LEVELDB_PUBLIC_INCLUDE_DIR "include/leveldb")
+set(LEVELDB_PORT_CONFIG_DIR "include/port")
+configure_file(
+    "port/port_config.h.in"
+    "${PROJECT_BINARY_DIR}/${LEVELDB_PORT_CONFIG_DIR}/port_config.h"
 )
-add_library(store STATIC ${DB})
 
+# include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/db)
+include_directories(
+    "${PROJECT_SOURCE_DIR}/include"
+    "."
+)
+
+add_library(DB "")
+target_sources(DB
+    PRIVATE
+
+    # "${PROJECT_BINARY_DIR}/${LEVELDB_PORT_CONFIG_DIR}/port_config.h"
+    "db/builder.cc"
+    "db/builder.h"
+    "db/c.cc"
+    "db/db_impl.cc"
+    "db/db_impl.h"
+    "db/db_iter.cc"
+    "db/db_iter.h"
+    "db/dbformat.cc"
+    "db/dbformat.h"
+    "db/dumpfile.cc"
+    "db/filename.cc"
+    "db/filename.h"
+    "db/log_format.h"
+    "db/log_reader.cc"
+    "db/log_reader.h"
+    "db/log_writer.cc"
+    "db/log_writer.h"
+    "db/memtable.cc"
+    "db/memtable.h"
+    "db/repair.cc"
+    "db/skiplist.h"
+    "db/snapshot.h"
+    "db/table_cache.cc"
+    "db/table_cache.h"
+    "db/version_edit.cc"
+    "db/version_edit.h"
+    "db/version_set.cc"
+    "db/version_set.h"
+    "db/write_batch_internal.h"
+    "db/write_batch.cc"
+    "port/port_stdcxx.h"
+    "port/port.h"
+    "port/thread_annotations.h"
+    "table/block_builder.cc"
+    "table/block_builder.h"
+    "table/block.cc"
+    "table/block.h"
+    "table/filter_block.cc"
+    "table/filter_block.h"
+    "table/format.cc"
+    "table/format.h"
+    "table/iterator_wrapper.h"
+    "table/iterator.cc"
+    "table/merger.cc"
+    "table/merger.h"
+    "table/table_builder.cc"
+    "table/table.cc"
+    "table/two_level_iterator.cc"
+    "table/two_level_iterator.h"
+    "util/arena.cc"
+    "util/arena.h"
+    "util/bloom.cc"
+    "util/cache.cc"
+    "util/coding.cc"
+    "util/coding.h"
+    "util/comparator.cc"
+    "util/crc32c.cc"
+    "util/crc32c.h"
+    "util/env.cc"
+    "util/filter_policy.cc"
+    "util/hash.cc"
+    "util/hash.h"
+    "util/logging.cc"
+    "util/logging.h"
+    "util/mutexlock.h"
+    "util/no_destructor.h"
+    "util/options.cc"
+    "util/random.h"
+    "util/status.cc"
+    $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/c.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/cache.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/comparator.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/db.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/dumpfile.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/env.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/export.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/filter_policy.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/iterator.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/options.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/slice.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/status.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/table_builder.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/table.h"
+    "${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
+    "util/env_posix.cc"
+    "util/posix_logger.h"
+)
+
+# target_include_directories(DB
+# PUBLIC
+# $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+# $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+# )
+set(LEVELDB_PLATFORM_NAME LEVELDB_PLATFORM_POSIX)
+target_compile_definitions(DB
+    PRIVATE
+
+    # Used by include/export.h when building shared libraries.
+    LEVELDB_COMPILE_LIBRARY
+
+    # Used by port/port.h.
+    ${LEVELDB_PLATFORM_NAME}=1
+)
+
+enable_testing()
 add_executable(TEST "")
 target_sources(TEST
     PRIVATE
@@ -136,7 +228,7 @@ target_sources(TEST
     "tests/arenaTest.cc"
     "tests/statusTest.cc"
     "tests/googletest_to_catchtest.cc")
-target_link_libraries(TEST store Catch2::Catch2WithMain)
+target_link_libraries(TEST DB Catch2::Catch2WithMain)
 
 add_test(NAME "tests" COMMAND "TEST")
 

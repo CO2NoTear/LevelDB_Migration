@@ -7,10 +7,10 @@
 // @email niexiaowen@uestc.edu.cn
 //
 #include <catch2/catch_test_macros.hpp>
-#include <store/arena.h>
-#include <store/random.h>
+#include <util/arena.h>
+#include <util/random.h>
 
-using namespace store;
+using namespace leveldb;
 
 TEST_CASE("store/arena.h")
 {
@@ -29,8 +29,8 @@ TEST_CASE("store/arena.h")
                 s = i;
             } else {
                 s = rnd.OneIn(4000)
-                        ? rnd.uniform(6000)
-                        : (rnd.OneIn(10) ? rnd.uniform(100) : rnd.uniform(20));
+                        ? rnd.Uniform(6000)
+                        : (rnd.OneIn(10) ? rnd.Uniform(100) : rnd.Uniform(20));
             }
             if (s == 0) {
                 // Our arena disallows size 0 allocations.
@@ -38,9 +38,9 @@ TEST_CASE("store/arena.h")
             }
             char *r;
             if (rnd.OneIn(10)) {
-                r = arena.aligned(s);
+                r = arena.AllocateAligned(s);
             } else {
-                r = arena.allocate(s);
+                r = arena.Allocate(s);
             }
 
             for (size_t b = 0; b < s; b++) {
@@ -49,8 +49,8 @@ TEST_CASE("store/arena.h")
             }
             bytes += s;
             allocated.push_back(std::make_pair(s, r));
-            REQUIRE(arena.usage() >= bytes);
-            if (i > N / 10) { REQUIRE(arena.usage() <= bytes * 1.10); }
+            REQUIRE(arena.MemoryUsage() >= bytes);
+            if (i > N / 10) { REQUIRE(arena.MemoryUsage() <= bytes * 1.10); }
         }
         for (size_t i = 0; i < allocated.size(); i++) {
             size_t num_bytes = allocated[i].first;
