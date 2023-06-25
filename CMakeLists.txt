@@ -80,6 +80,20 @@ endif()
 # 操作系统
 set(Linux "Linux")
 
+# Ensure we have pthreads
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-pthread")
+
+if(HAVE_CLANG_THREAD_SAFETY)
+    target_compile_options(leveldb
+        PUBLIC
+        -Werror -Wthread-safety)
+endif(HAVE_CLANG_THREAD_SAFETY)
+
+# cxx_feature_check(PTHREAD_AFFINITY)
+
 # 检查数据类型
 include(CheckTypeSize)
 check_type_size(long SIZEOF_LONG)
@@ -180,6 +194,7 @@ target_sources(DB
     "util/logging.h"
     "util/mutexlock.h"
     "util/no_destructor.h"
+    "util/env_posix_test_helper.h"
     "util/options.cc"
     "util/random.h"
     "util/status.cc"
@@ -224,6 +239,7 @@ add_executable(TEST "")
 target_sources(TEST
     PRIVATE
 
+    "tests/log_test.cc"
     "tests/skiplist_test.cc"
     "tests/arenaTest.cc"
     "tests/statusTest.cc"
