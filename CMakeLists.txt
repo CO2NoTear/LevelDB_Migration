@@ -100,18 +100,39 @@ find_package(Catch2 REQUIRED)
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
 
 set(DB
+    "include/store/arena.h"
+    "include/store/coding.h"
+    "include/store/crc32c.h"
+    "include/store/log_format.h"
+    "include/store/random.h"
+    "include/store/skiplist.h"
+    "include/store/write_batch.h"
+    "include/store/write_batch_internal.h"
+    "include/store/mutexlock.h"
+
+    "include/store/file.h"
+
+    # "include/store/log_reader.h"
+    # "include/store/log_writer.h"
+    "include/store/status.h"
+    "include/store/slice.h"
+    "include/store/port.h"
+    "include/store/thread_annotations.h"
+
+    "src/store/crc32c.cc"
+
+    # "src/store/log_reader.cc"
+    # "src/store/log_writer.cc"
     "src/store/arena.cc"
-    "src/store/arena.h"
-    "src/store/random.h"
-    "src/store/skiplist.h"
-    "src/store/status.cc")
+    "src/store/status.cc"
+)
 add_library(store STATIC ${DB})
 
 add_executable(TEST "")
 target_sources(TEST
     PRIVATE
 
-    # "tests/skiplist_test.cc"
+    "tests/skiplist_test.cc"
     "tests/arenaTest.cc"
     "tests/statusTest.cc"
     "tests/googletest_to_catchtest.cc")

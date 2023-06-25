@@ -22,6 +22,9 @@ class Status
     Status()
         : status_(0)
     {}
+    Status(int x)
+        : status_(x)
+    {}
     ~Status() = default;
     Status(const Status &other)
         : status_(other.status_)
@@ -45,6 +48,8 @@ class Status
         else
             return localDescript(1000);
     }
+
+    bool ok() const { return (status_ == 0); }
 
     inline int get() { return status_; }
     inline void set(int code) { status_ = code; }

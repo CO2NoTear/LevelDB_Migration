@@ -6,7 +6,7 @@
 // @author uestc
 // @email niexiaowen@uestc.edu.cn
 //
-#include "./arena.h"
+#include "store/arena.h"
 
 namespace store {
 
