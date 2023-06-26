@@ -9,9 +9,6 @@
 #include "util/arena.h"
 #include "util/random.h"
 
-#define ASSERT_TRUE(exp) REQUIRE(exp == true)
-#define ASSERT_EQ(exp1, exp2) REQUIRE((exp1) == (exp2))
-
 namespace leveldb {
 
 typedef uint64_t Key;
@@ -37,16 +34,16 @@ TEST_CASE("skiplist test")
         Arena arena;
         Comparator cmp;
         SkipList<Key, Comparator> list(cmp, &arena);
-        ASSERT_TRUE(!list.Contains(10));
+        REQUIRE(!list.Contains(10));
 
         SkipList<Key, Comparator>::Iterator iter(&list);
-        ASSERT_TRUE(!iter.Valid());
+        REQUIRE(!iter.Valid());
         iter.SeekToFirst();
-        ASSERT_TRUE(!iter.Valid());
+        REQUIRE(!iter.Valid());
         iter.Seek(100);
-        ASSERT_TRUE(!iter.Valid());
+        REQUIRE(!iter.Valid());
         iter.SeekToLast();
-        ASSERT_TRUE(!iter.Valid());
+        REQUIRE(!iter.Valid());
     }
 
     SECTION("InsertAndLookup")
@@ -65,28 +62,28 @@ TEST_CASE("skiplist test")
 
         for (int i = 0; i < R; i++) {
             if (list.Contains(i)) {
-                ASSERT_EQ(keys.count(i), 1);
+                REQUIRE(keys.count(i) == 1);
             } else {
-                ASSERT_EQ(keys.count(i), 0);
+                REQUIRE(keys.count(i) == 0);
             }
         }
 
         // Simple iterator tests
         {
             SkipList<Key, Comparator>::Iterator iter(&list);
-            ASSERT_TRUE(!iter.Valid());
+            REQUIRE(!iter.Valid());
 
             iter.Seek(0);
-            ASSERT_TRUE(iter.Valid());
-            ASSERT_EQ(*(keys.begin()), iter.key());
+            REQUIRE(iter.Valid());
+            REQUIRE(*(keys.begin()) == iter.key());
 
             iter.SeekToFirst();
-            ASSERT_TRUE(iter.Valid());
-            ASSERT_EQ(*(keys.begin()), iter.key());
+            REQUIRE(iter.Valid());
+            REQUIRE(*(keys.begin()) == iter.key());
 
             iter.SeekToLast();
-            ASSERT_TRUE(iter.Valid());
-            ASSERT_EQ(*(keys.rbegin()), iter.key());
+            REQUIRE(iter.Valid());
+            REQUIRE(*(keys.rbegin()) == iter.key());
         }
 
         // Forward iteration test
@@ -98,11 +95,11 @@ TEST_CASE("skiplist test")
             std::set<Key>::iterator model_iter = keys.lower_bound(i);
             for (int j = 0; j < 3; j++) {
                 if (model_iter == keys.end()) {
-                    ASSERT_TRUE(!iter.Valid());
+                    REQUIRE(!iter.Valid());
                     break;
                 } else {
-                    ASSERT_TRUE(iter.Valid());
-                    ASSERT_EQ(*model_iter, iter.key());
+                    REQUIRE(iter.Valid());
+                    REQUIRE(*model_iter == iter.key());
                     ++model_iter;
                     iter.Next();
                 }
@@ -118,11 +115,11 @@ TEST_CASE("skiplist test")
             for (std::set<Key>::reverse_iterator model_iter = keys.rbegin();
                  model_iter != keys.rend();
                  ++model_iter) {
-                ASSERT_TRUE(iter.Valid());
-                ASSERT_EQ(*model_iter, iter.key());
+                REQUIRE(iter.Valid());
+                REQUIRE(*model_iter == iter.key());
                 iter.Prev();
             }
-            ASSERT_TRUE(!iter.Valid());
+            REQUIRE(!iter.Valid());
         }
     }
 
