@@ -239,6 +239,7 @@ add_executable(TEST "")
 target_sources(TEST
     PRIVATE
 
+    "tests/memtableTest.cc"
     "tests/log_test.cc"
     "tests/skiplist_test.cc"
     "tests/arenaTest.cc"

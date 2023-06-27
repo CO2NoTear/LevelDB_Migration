@@ -1,6 +1,16 @@
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
+/**
+ * @file log_test.cc
+ * @author CO2NoTear (sqede@outlook.com)
+ * @brief
+ * @version 0.1
+ * @date 2023-06-26
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 
 #include <catch2/catch_test_macros.hpp>
 #include "db/log_reader.h"
