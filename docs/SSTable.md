@@ -260,27 +260,27 @@ Major Compaction更为复杂，
    1. 如果存在一个低级SST，与高级的SST Key空间没有任何交叠：  
       直接Level+1，不用合并，轻松愉快。  
 
-    ```c++
-    // ... 上面是manual compaction的情况，不考虑
-    // 选择需要compaction的SST: level-L
-    } else {
-        c = versions_->PickCompaction();
-    }
+```c++
+  // ... 上面是manual compaction的情况，不考虑
+  // 选择需要compaction的SST: level-L
+  } else {
+      c = versions_->PickCompaction();
+  }
 
-    Status status;
-    if (c == nullptr) {
-        // Nothing to do
-    } else if (!is_manual 
-                        // 
-                    && c->IsTrivialMove()) {
-        // Move file to next level
-        assert(c->num_input_files(0) == 1);
-        FileMetaData* f = c->input(0, 0);
-        c->edit()->RemoveFile(c->level(), f->number);
-        c->edit()->AddFile(c->level() + 1, f->number, f->file_size, f->smallest,
-                        f->largest);
-    //...
-    ```  
+  Status status;
+  if (c == nullptr) {
+      // Nothing to do
+  } else if (!is_manual 
+                      // 
+                  && c->IsTrivialMove()) {
+      // Move file to next level
+      assert(c->num_input_files(0) == 1);
+      FileMetaData* f = c->input(0, 0);
+      c->edit()->RemoveFile(c->level(), f->number);
+      c->edit()->AddFile(c->level() + 1, f->number, f->file_size, f->smallest,
+                      f->largest);
+  //...
+```  
 
    2. 反之，用多路归并算法把它俩合并。  
 这个多路归并看不太明白。。
